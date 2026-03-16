@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Donate Medicine — MediShare{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="inner">
+    <div class="label">Donor Portal</div>
+    <h1>Donate a Medicine</h1>
+    <p>Fill in the details below. All donations are reviewed before dispatch.</p>
+  </div>
+</div>
+
+<div class="donate-wrap">
+
+  <!-- Rules reminder -->
+  <div style="background:#e8f7f0; border:1px solid rgba(26,122,74,0.2); border-radius:14px; padding:1.2rem 1.4rem; margin-bottom:2rem;">
+    <strong style="color:#1a7a4a; font-size:0.88rem;">✅ Donation Rules</strong>
+    <ul style="margin-top:0.6rem; padding-left:1.2rem; font-size:0.82rem; color:#2d5a3d; line-height:2;">
+      <li>Expiry date must be at least <strong>30 days</strong> from today</li>
+      <li>Medicine must be <strong>sealed and unopened</strong></li>
+      <li>Label must be <strong>clearly visible</strong> in the photo</li>
+      <li>Damaged or tampered medicines will be rejected</li>
+    </ul>
+  </div>
+
+  <div class="donate-card">
+    <form method="POST" action="{{ url_for('donate') }}" enctype="multipart/form-data">
+
+      <div class="form-group">
+        <label>Medicine Name <span style="color:#e05050;">*</span></label>
+        <input type="text" name="medicine_name" class="form-control"
+               placeholder="e.g. Paracetamol 500mg, Metformin 1000mg" required/>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Quantity <span style="color:#e05050;">*</span></label>
+          <input type="text" name="quantity" class="form-control"
+                 placeholder="e.g. 2 strips, 1 bottle (60 tablets)" required/>
+        </div>
+        <div class="form-group">
+          <label>Expiry Date <span style="color:#e05050;">*</span></label>
+          <input type="date" name="expiry_date" class="form-control" required
+                 min="{{ min_date }}"/>
+          <div class="form-hint">Must be 30+ days from today</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description (optional)</label>
+        <textarea name="description" class="form-control"
+                  placeholder="Any additional info — storage conditions, original box, etc."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Medicine Photo <span style="color:#e05050;">*</span></label>
+        <label class="photo-upload-area" for="photo-input">
+          <div class="up-icon">📷</div>
+          <strong style="font-size:0.9rem;">Click to upload a photo</strong>
+          <p>Show label, name, expiry date clearly (JPG / PNG)</p>
+        </label>
+        <input type="file" id="photo-input" name="photo" accept="image/*"
+               style="display:none;" onchange="previewPhoto(this)"/>
+        <img id="photo-preview" src="" alt=""
+             style="display:none; margin-top:0.8rem; border-radius:10px; max-height:200px; width:100%; object-fit:cover;"/>
+      </div>
+
+      <div style="display:flex; gap:1rem; margin-top:0.5rem;">
+        <button type="submit" class="btn btn-primary" style="flex:1;">Submit for Verification</button>
+        <a href="{{ url_for('donor_dashboard') }}" class="btn btn-secondary">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+function previewPhoto(input) {
+  const preview = document.getElementById('photo-preview');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+    document.querySelector('.photo-upload-area strong').textContent = input.files[0].name;
+  }
+}
+</script>
+{% endblock %}

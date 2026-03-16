@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Donor Dashboard — MediShare{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="inner">
+    <div class="label">Donor Portal</div>
+    <h1>My Donations</h1>
+    <p>Track all the medicines you have donated</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-tile">
+      <div class="st-num">{{ medicines|selectattr('4','equalto','pending')|list|length }}</div>
+      <div class="st-label">Pending Verification</div>
+    </div>
+    <div class="stat-tile">
+      <div class="st-num">{{ medicines|selectattr('4','equalto','approved')|list|length }}</div>
+      <div class="st-label">Approved</div>
+    </div>
+    <div class="stat-tile">
+      <div class="st-num">{{ medicines|selectattr('4','equalto','rejected')|list|length }}</div>
+      <div class="st-label">Rejected</div>
+    </div>
+    <div class="stat-tile">
+      <div class="st-num">{{ medicines|length }}</div>
+      <div class="st-label">Total Donated</div>
+    </div>
+  </div>
+
+  <!-- Header with action -->
+  <div class="section-head">
+    <div>
+      <h2>Donation History</h2>
+      <p>All medicines you have submitted</p>
+    </div>
+    <a href="{{ url_for('donate') }}" class="btn btn-primary">+ Donate Medicine</a>
+  </div>
+
+  {% if medicines %}
+  <div class="med-grid">
+    {% for m in medicines %}
+    <div class="med-card">
+      {% if m[6] %}
+        <img src="{{ url_for('static', filename='uploads/' ~ m[6]) }}" class="med-photo" alt="{{ m[2] }}"/>
+      {% else %}
+        <div class="med-photo-placeholder">💊</div>
+      {% endif %}
+      <div class="med-body">
+        <div class="med-name">{{ m[2] }}</div>
+        <div class="med-meta">
+          📦 Qty: {{ m[3] }}<br/>
+          📅 Expires: {{ m[4] }}<br/>
+          {% if m[9] %}🏥 NGO: {{ m[9] }}{% endif %}
+        </div>
+      </div>
+      <div class="med-footer">
+        <span class="badge badge-{{ m[7] }}">{{ m[7]|capitalize }}</span>
+        <small style="color:#6b7c74; font-size:0.75rem;">{{ m[8].strftime('%d %b %Y') if m[8] else '' }}</small>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">💊</div>
+    <p>You haven't donated any medicines yet.</p>
+    <a href="{{ url_for('donate') }}" class="btn btn-primary" style="margin-top:1rem;">Donate Now</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

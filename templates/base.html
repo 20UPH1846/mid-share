@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>{% block title %}MediShare{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+{% block head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-logo" href="{{ url_for('index') }}">Medi<span>Share</span></a>
+  <ul class="nav-links">
+    {% if session.user_role == 'donor' %}
+      <li><a href="{{ url_for('donor_dashboard') }}">My Donations</a></li>
+      <li><a href="{{ url_for('donate') }}" class="nav-donate">+ Donate</a></li>
+    {% elif session.user_role == 'ngo' %}
+      <li><a href="{{ url_for('ngo_dashboard') }}">Browse Medicines</a></li>
+    {% elif session.user_role == 'admin' %}
+      <li><a href="{{ url_for('admin_dashboard') }}">Admin Panel</a></li>
+    {% else %}
+      <li><a href="{{ url_for('index') }}">Home</a></li>
+    {% endif %}
+  </ul>
+  <div class="nav-right">
+    {% if session.user_id %}
+      <span class="nav-user">👋 {{ session.user_name }}</span>
+      <a href="{{ url_for('logout') }}" class="btn-outline-sm">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn-outline-sm">Login</a>
+      <a href="{{ url_for('register') }}" class="btn-green-sm">Register</a>
+    {% endif %}
+  </div>
+</nav>
+
+<div class="flash-zone">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="flash flash-{{ cat }}">{{ msg }} <button onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="site-footer">
+  <p>© 2024 <span>MediShare</span> — Online Unused Medicine Donation for NGOs &nbsp;|&nbsp; Final Year Project, IT Dept</p>
+</footer>
+</body>
+</html>

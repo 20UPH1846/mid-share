@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — MediShare{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="inner">
+    <div class="label">Admin Panel</div>
+    <h1>MediShare Admin</h1>
+    <p>Verify donations, manage requests, and oversee the platform</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-tile">
+      <div class="st-num" style="color:#f4a826;">{{ pending }}</div>
+      <div class="st-label">Pending Verification</div>
+    </div>
+    <div class="stat-tile">
+      <div class="st-num">{{ approved }}</div>
+      <div class="st-label">Approved Medicines</div>
+    </div>
+    <div class="stat-tile">
+      <div class="st-num" style="color:#0d6e8a;">{{ total_req }}</div>
+      <div class="st-label">Total NGO Requests</div>
+    </div>
+    <div class="stat-tile">
+      <div class="st-num">{{ donors }}</div>
+      <div class="st-label">Registered Donors</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('pending', this)">⏳ Pending ({{ pending_meds|length }})</button>
+    <button class="tab-btn" onclick="showTab('all', this)">💊 All Medicines</button>
+    <button class="tab-btn" onclick="showTab('requests', this)">📦 NGO Requests</button>
+  </div>
+
+  <!-- Tab: Pending -->
+  <div class="tab-pane active" id="tab-pending">
+    {% if pending_meds %}
+    <div class="med-grid">
+      {% for m in pending_meds %}
+      <div class="med-card">
+        {% if m[6] %}
+          <img src="{{ url_for('static', filename='uploads/' ~ m[6]) }}" class="med-photo" alt="{{ m[2] }}"/>
+        {% else %}
+          <div class="med-photo-placeholder">💊</div>
+        {% endif %}
+        <div class="med-body">
+          <div class="med-name">{{ m[2] }}</div>
+          <div class="med-meta">
+            📦 Qty: {{ m[3] }}<br/>
+            📅 Expires: {{ m[4] }}<br/>
+            🙋 Donor: {{ m[9] }}
+          </div>
+          {% if m[5] %}<p style="font-size:0.8rem; color:#6b7c74; margin-top:0.4rem;">{{ m[5] }}</p>{% endif %}
+        </div>
+        <div class="med-footer" style="gap:0.6rem;">
+          <a href="{{ url_for('admin_action', med_id=m[0], action='approve') }}"
+             class="btn btn-secondary btn-sm">✅ Approve</a>
+          <a href="{{ url_for('admin_action', med_id=m[0], action='reject') }}"
+             class="btn btn-danger btn-sm">✗ Reject</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty">
+      <div class="empty-icon">🎉</div>
+      <p>No pending medicines. All caught up!</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Tab: All Medicines -->
+  <div class="tab-pane" id="tab-all">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Medicine</th>
+            <th>Qty</th>
+            <th>Expiry</th>
+            <th>Donor</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in all_meds %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><strong>{{ m[2] }}</strong></td>
+            <td>{{ m[3] }}</td>
+            <td>{{ m[4] }}</td>
+            <td>{{ m[9] }}</td>
+            <td><span class="badge badge-{{ m[7] }}">{{ m[7]|capitalize }}</span></td>
+            <td>{{ m[8].strftime('%d %b %Y') if m[8] else '' }}</td>
+            <td style="white-space:nowrap;">
+              {% if m[7] == 'pending' %}
+              <a href="{{ url_for('admin_action', med_id=m[0], action='approve') }}" class="btn btn-secondary btn-sm">✅</a>
+              <a href="{{ url_for('admin_action', med_id=m[0], action='reject') }}" class="btn btn-danger btn-sm">✗</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab: NGO Requests -->
+  <div class="tab-pane" id="tab-requests">
+    {% if all_requests %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Medicine</th>
+            <th>NGO</th>
+            <th>Note</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Update Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in all_requests %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><strong>{{ r[5] }}</strong></td>
+            <td>{{ r[6] }}</td>
+            <td>{{ r[3] or '—' }}</td>
+            <td><span class="badge badge-{{ r[4] }}">{{ r[4]|replace('_',' ')|title }}</span></td>
+            <td>{{ r[7].strftime('%d %b %Y') if r[7] else '' }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('update_delivery', req_id=r[0]) }}" style="display:flex; gap:0.5rem; align-items:center;">
+                <select name="status" class="form-control" style="padding:0.35rem 0.7rem; font-size:0.8rem; width:auto; min-width:120px;">
+                  {% for s in ['pending','approved','in_transit','delivered'] %}
+                  <option value="{{ s }}" {% if r[4] == s %}selected{% endif %}>{{ s|replace('_',' ')|title }}</option>
+                  {% endfor %}
+                </select>
+                <button class="btn btn-primary btn-sm" type="submit">Save</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">
+      <div class="empty-icon">📦</div>
+      <p>No NGO requests yet.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+{% endblock %}

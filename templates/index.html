@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}MediShare — Donate Unused Medicines{% endblock %}
+{% block content %}
+
+<style>
+.hero {
+  min-height: 92vh;
+  background: linear-gradient(135deg, #0f2318 0%, #0a2820 45%, #1a5c3a 100%);
+  display: flex; align-items: center; padding: 4rem 4vw;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 70% 50%, rgba(37,166,106,0.13) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0; opacity: 0.03;
+  background-image: linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-content { position: relative; z-index: 2; max-width: 620px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(37,166,106,0.15); border: 1px solid rgba(37,166,106,0.3);
+  color: #25a66a; padding: 0.4rem 1rem; border-radius: 50px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.6rem, 5.5vw, 4.5rem); font-weight: 900; line-height: 1.05;
+  color: #fff; margin-bottom: 1.4rem;
+}
+.hero h1 em { color: #25a66a; font-style: normal; }
+.hero p { font-size: 1.1rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 2.4rem; max-width: 500px; }
+.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hero-btns .btn { font-size: 1rem; padding: 0.85rem 2rem; }
+.btn-white { background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); }
+.btn-white:hover { background: rgba(255,255,255,0.18); }
+.hero-stats {
+  position: absolute; right: 4vw; bottom: 3rem; z-index: 2;
+  display: flex; gap: 1.5rem;
+}
+.stat-c {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  padding: 1.1rem 1.4rem; border-radius: 16px; text-align: center; backdrop-filter: blur(10px);
+}
+.stat-c .n { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; color:#25a66a; }
+.stat-c .l { font-size:0.7rem; color:rgba(255,255,255,0.45); margin-top:0.15rem; }
+
+/* Steps section */
+.steps-section { padding: 5rem 4vw; background: #fff; }
+.steps-section h2 { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:900; color:#0f2318; margin-bottom:0.5rem; }
+.steps-section .sub { color:#6b7c74; margin-bottom:3rem; font-size:1rem; }
+.steps-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.5rem; }
+.step-box { text-align:center; padding:2rem 1rem; }
+.step-circle {
+  width:56px; height:56px; border-radius:50%; background:#1a7a4a; color:#fff;
+  font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:900;
+  display:flex; align-items:center; justify-content:center; margin:0 auto 1.2rem;
+}
+.step-box h3 { font-size:0.95rem; font-weight:700; color:#0f2318; margin-bottom:0.4rem; }
+.step-box p { font-size:0.82rem; color:#6b7c74; line-height:1.5; }
+
+/* CTA section */
+.cta-strip {
+  background:linear-gradient(135deg,#1a7a4a,#0d6e8a);
+  padding:4rem 4vw; text-align:center;
+}
+.cta-strip h2 { font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:#fff; margin-bottom:0.8rem; }
+.cta-strip p { color:rgba(255,255,255,0.7); margin-bottom:2rem; }
+.cta-strip .hero-btns { justify-content:center; }
+</style>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🌿 Final Year Project — IT Department</div>
+    <h1>Turning Unused<br/><em>Medicines</em><br/>Into Hope</h1>
+    <p>An online platform connecting donors with NGOs — ensuring safe, verified, and transparent medicine donations for patients in need.</p>
+    <div class="hero-btns">
+      <a href="{{ url_for('register') }}" class="btn btn-primary">🌿 Get Started</a>
+      <a href="{{ url_for('login') }}"    class="btn btn-white">Login →</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-c"><div class="n">30%</div><div class="l">Medicines Wasted<br/>in India</div></div>
+    <div class="stat-c"><div class="n">5+</div><div class="l">Key Modules<br/>Built</div></div>
+    <div class="stat-c"><div class="n">100%</div><div class="l">Verified Before<br/>Delivery</div></div>
+  </div>
+</section>
+
+<section class="steps-section">
+  <h2>How It Works</h2>
+  <p class="sub">5 simple steps from donation to delivery</p>
+  <div class="steps-row">
+    <div class="step-box">
+      <div class="step-circle">1</div>
+      <h3>Register</h3>
+      <p>Create your account as a Donor or NGO</p>
+    </div>
+    <div class="step-box">
+      <div class="step-circle">2</div>
+      <h3>Donate</h3>
+      <p>Upload medicine details, quantity, and photo</p>
+    </div>
+    <div class="step-box">
+      <div class="step-circle">3</div>
+      <h3>Verify</h3>
+      <p>Admin checks expiry, seal, and safety</p>
+    </div>
+    <div class="step-box">
+      <div class="step-circle">4</div>
+      <h3>Request</h3>
+      <p>NGO browses and requests needed medicines</p>
+    </div>
+    <div class="step-box">
+      <div class="step-circle">5</div>
+      <h3>Deliver</h3>
+      <p>Medicine reaches NGO with real-time tracking</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta-strip">
+  <h2>Ready to Make a Difference?</h2>
+  <p>Your unused medicines can save someone's life today.</p>
+  <div class="hero-btns">
+    <a href="{{ url_for('register') }}" class="btn btn-primary">Donate as Individual</a>
+    <a href="{{ url_for('register') }}" class="btn btn-white">Register as NGO</a>
+  </div>
+</section>
+{% endblock %}
