@@ -1,0 +1,5 @@
+[phases.setup]
+nixPkgs = ["python311", "gcc"]
+
+[start]
+cmd = "gunicorn --bind 0.0.0.0:$PORT app:app --timeout 120"
