@@ -88,7 +88,7 @@ app.config['MYSQL_PASSWORD'] = 'your_actual_mysql_password'
 python app.py
 ```
 
-Open your browser at: **http://localhost:5000**
+Open your browser at: https://mid-share-production.up.railway.app/
 
 ---
 
